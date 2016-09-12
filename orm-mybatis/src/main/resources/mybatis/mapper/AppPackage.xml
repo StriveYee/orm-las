@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="app_package">
+
+    <resultMap id="AppPackageResult" type="appPackage">
+        <result column="id" property="id"/>
+        <result column="app_name" property="appName"/>
+        <result column="platform_id" property="platformId"/>
+        <result column="client_version" property="clientVersion"/>
+        <result column="parent_version" property="parentVersion"/>
+        <result column="upgrade_strategy" property="upgradeStrategy"/>
+        <result column="status" property="status"/>
+        <result column="download_path" property="downloadPath"/>
+        <result column="size" property="size"/>
+        <result column="description" property="description"/>
+        <result column="create_time" property="created"/>
+        <result column="modify_time" property="modified"/>
+    </resultMap>
+
+    <sql id="baseSql">
+              id, app_name,platform_id, client_version,parent_version,  upgrade_strategy, status,
+              download_path, size, description, create_time, modify_time 
+    </sql>
+
+    <!--根据主键查询实体-->
+    <select id="selectByPrimaryKey" resultMap="AppPackageResult" parameterType="appPackage">
+        select
+        <include refid="baseSql"></include>
+        from JDBB_APP_PACKAGE
+        where id = #{id}
+    </select>
+    <!--分页查询oy-->
+    <select id="selectByPageQuery" resultMap="AppPackageResult" parameterType="java.util.Map">
+        select
+        <include refid="baseSql"></include>
+        from JDBB_APP_PACKAGE
+        order by app_name
+        limit #{startRow}, #{pageSize}
+
+    </select>
+    <!--查询复合分页的总记录数，现在是全查，以后有需求了再改-->
+    <select id="selectTotalByPageQuery" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(id)
+        from JDBB_APP_PACKAGE
+    </select>
+    <!--根据主键删除实体-->
+    <delete id="deleteByPrimaryKey" parameterType="appPackage">
+        delete from JDBB_APP_PACKAGE
+        where id = #{id}
+    </delete>
+    <!--插入新记录-->
+    <insert id="insert" parameterType="appPackage">
+        insert into JDBB_APP_PACKAGE (
+        id, app_name,platform_id, client_version,parent_version,  upgrade_strategy, status,
+        download_path, size, description, create_time, modify_time
+        )
+        values (#{id}, #{appName},#{platformId},#{clientVersion}, #{parentVersion},#{upgradeStrategy},
+        #{status}, #{downloadPath}, #{size}, #{description},now(),now()
+        )
+    </insert>
+    <!--根据主键更新实体OY-->
+    <update id="updateByPrimaryKey" parameterType="appPackage">
+         update JDBB_APP_PACKAGE
+            set   app_name = #{appName},
+                  platform_id = #{platformId},
+                  client_version = #{clientVersion},
+                  parent_version = #{parentVersion},
+                  upgrade_strategy = #{upgradeStrategy},
+                  status = #{status},
+                  download_path = #{downloadPath},
+                  size = #{size},
+                  description = #{description},
+                  modify_time = now()
+        where id = #{id}
+    </update>
+    <!--更新版本的状态-->
+    <update id="updateStatusById" parameterType="appPackage">
+         update JDBB_APP_PACKAGE
+            set status = #{status}
+          where id = #{id}
+    </update>
+
+
+  
+</mapper>
